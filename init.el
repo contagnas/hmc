@@ -36,7 +36,7 @@
     "b"   '(:ignore t :wk "buffer")
     "c"   '(:ignore t :wk "config")
     "d"   '(:ignore t :wk)
-    "e"   '(:ignore t :wk)
+    ;;"e"   used
     "f"   '(:ignore t :wk "file")
     "g"   '(:ignore t :wk)
     ;"h"  used
@@ -47,14 +47,14 @@
     "m"   '(:ignore t :wk)
     "n"   '(:ignore t :wk)
     "o"   '(:ignore t :wk)
-    "p"   '(:ignore t :wk)
+    "p"   '(:ignore t :wk "project")
     "q"   '(:ignore t :wk)
     "r"   '(:ignore t :wk)
     "s"   '(:ignore t :wk)
-    "t"   '(:ignore t :wk)
+    "t"   '(:ignore t :wk "text")
     ;"u"  used
     "v"   '(:ignore t :wk)
-    "w"   '(:ignore t :wk)
+    "w"   '(:ignore t :wk "window")
     "x"   '(:ignore t :wk)
     "y"   '(:ignore t :wk)
     "z"   '(:ignore t :wk)
@@ -85,6 +85,8 @@
     "wj" '(evil-window-down :wk)
     "wh" '(evil-window-left :wk)
     "wl" '(evil-window-right :wk)
+    "wv" '(evil-window-vsplit :wk)
+    "wh" '(evil-window-hsplit :wk)
     "bp" '(evil-prev-buffer :wk)
     "bn" '(evil-next-buffer :wk)))
 
@@ -156,11 +158,17 @@
     "fs" '(save-buffer :wk)
     "ff" '(find-file :wk)
     "u" '(universal-argument :wk)
-    "wd" '(delete-window)))
+    "wm" '(delete-other-windows :wk)
+    "wd" '(delete-window :wk)))
 
 (use-package eshell
   :preface
   (defalias 'eshell/f 'find-file)
+  (defun eshell/clear ()
+    "Clear the eshell buffer."
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (eshell-send-input)))
   
   :config
   ;;(add-hook 'eshell-post-command-hook 'post-test)
@@ -177,8 +185,14 @@
 (use-package consult
   :general
   (spc
-    "bb" '(consult-buffer :wk "switch to buffer")
-    "wb" '(consult-buffer-other-window :wk "open buffer in other window")))
+    "bb" '(consult-buffer :wk)
+    "wb" '(consult-buffer-other-window :wk)
+    "ps" '(consult-ripgrep :wk)
+    "tp" '(consult-yank-from-kill-ring :wk))
+  
+  :config
+  (setq consult-narrow-key "<")
+  )
 
 (use-package lsp-mode
   :init
@@ -215,4 +229,17 @@
   :config
   (defun eshell/.. (&optional arg) (eshell-up arg)))
 
+(use-package bazel)
 
+(use-package scala-mode)
+
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+
+(use-package projectile)
+
+(use-package consult-projectile
+  :after projectile
+  :general
+  (spc "pf" '(consult-projectile :wk)))
+
+(use-package zoom-frm)
